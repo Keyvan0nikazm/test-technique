@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Status {
+  en_attente
+  acceptee
+  refusee
+  annulee
+}
+
+model DemandeStage {
+  id         Int      @id @default(autoincrement())
+  nom        String
+  prenom     String
+  email      String
+  service    String
+  dateDebut  DateTime
+  dateFin    DateTime
+  motivation String?        // optionnel
+  status     Status  @default(en_attente)
+  createdAt  DateTime @default(now())
+}
+
+model Expense {
+  id                         Int      @id @default(autoincrement())
+  date                       DateTime @default(now())
+  description                String
+  amount                     Float
+  payerId                    Int
+  User_Expense_payerIdToUser User     @relation("Expense_payerIdToUser", fields: [payerId], references: [id])
+  User_ParticipantExpenses   User[]   @relation("ParticipantExpenses")
+}
+
+model Transfer {
+  id                           Int      @id @default(autoincrement())
+  amount                       Float
+  date                         DateTime @default(now())
+  sourceId                     Int
+  targetId                     Int
+  User_Transfer_sourceIdToUser User     @relation("Transfer_sourceIdToUser", fields: [sourceId], references: [id])
+  User_Transfer_targetIdToUser User     @relation("Transfer_targetIdToUser", fields: [targetId], references: [id])
+}
+
+model User {
+  id                               Int        @id @default(autoincrement())
+  name                             String
+  email                            String     @unique
+  bankAccount                      String?
+  Expense_Expense_payerIdToUser    Expense[]  @relation("Expense_payerIdToUser")
+  Transfer_Transfer_sourceIdToUser Transfer[] @relation("Transfer_sourceIdToUser")
+  Transfer_Transfer_targetIdToUser Transfer[] @relation("Transfer_targetIdToUser")
+  Expense_ParticipantExpenses      Expense[]  @relation("ParticipantExpenses")
+}

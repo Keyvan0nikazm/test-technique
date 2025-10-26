@@ -1,0 +1,29 @@
+@host = http://localhost:3000
+
+### Create demande
+POST {{host}}/intership
+Content-Type: application/json
+
+{
+  "nom": "Dupont",
+  "prenom": "Jean",
+  "email": "jean@example.com",
+  "service": "IT",
+  "dateDebut": "2025-11-01",
+  "dateFin": "2025-11-30",
+  "motivation": "Stage d'observation"
+}
+
+### List all demandes
+GET {{host}}/intership
+
+### Get demande detail
+GET {{host}}/intership/1
+
+### Update status
+PATCH {{host}}/intership/1/status
+Content-Type: application/json
+
+{
+  "status": "acceptee"
+}
