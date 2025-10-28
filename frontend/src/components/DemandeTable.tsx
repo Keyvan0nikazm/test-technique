@@ -14,10 +14,9 @@ type Props = {
   data: Demande[];
   onRefresh: () => void;
   onUpdateStatus: (id: number, status: Status) => void;
-  onCreateClick: () => void;
 };
 
-export default function DemandesTable({ data, onRefresh, onUpdateStatus, onCreateClick }: Props) {
+export default function DemandesTable({ data, onRefresh, onUpdateStatus }: Props) {
   console.log('DemandeTable data prop:', data);
   const [serviceFilter, setServiceFilter] = React.useState<string | null>(null);
   const [statusFilter, setStatusFilter] = React.useState<string | null>(null);
@@ -98,7 +97,7 @@ export default function DemandesTable({ data, onRefresh, onUpdateStatus, onCreat
           </Space>
         </Col>
         <Col>
-          <Button type="primary" onClick={onCreateClick}>Nouvelle demande</Button>
+          {/* bouton "Nouvelle demande" retiré d'ici - géré par la page parente */}
         </Col>
       </Row>
 

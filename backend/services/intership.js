@@ -35,9 +35,15 @@ async function createDemande(data) {
 }
 
 async function listDemandes() {
-  return await prisma.demandeStage.findMany({
-    orderBy: { createdAt: 'desc' } // supprime ou adapte si ton modèle n'a pas dateCreated
-  });
+  console.time('listDemandes');
+  try {
+    const res = await prisma.demandeStage.findMany({
+      orderBy: { createdAt: 'desc' }
+    });
+    return res;
+  } finally {
+    console.timeEnd('listDemandes');
+  }
 }
 
 async function getDemandeById(id) {
@@ -71,4 +77,22 @@ async function updateDemandeStatus(id, status) {
   return updated;
 }
 
-module.exports = { createDemande , listDemandes, getDemandeById, updateDemandeStatus};
+async function deleteDemande(id) {
+  const idNum = Number(id);
+  if (!Number.isInteger(idNum)) throw { status: 400, message: 'Id invalide' };
+
+  try {
+    await prisma.demandeStage.delete({
+      where: { id: idNum }
+    });
+    return { message: 'Demande supprimée' };
+  } catch (err) {
+    // Prisma throws code P2025 when record not found
+    if (err && err.code === 'P2025') {
+      throw { status: 404, message: 'Demande non trouvée' };
+    }
+    throw err;
+  }
+}
+
+module.exports = { createDemande , listDemandes, getDemandeById, updateDemandeStatus, deleteDemande};

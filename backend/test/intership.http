@@ -27,3 +27,6 @@ Content-Type: application/json
 {
   "status": "acceptee"
 }
+
+###delete intership demande
+DELETE {{host}}/intership/35

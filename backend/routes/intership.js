@@ -48,4 +48,15 @@ router.patch('/:id/status', async (req, res) => {
   }
 });
 
+router.delete('/:id', async (req, res) => {
+  try {
+    const result = await intershipService.deleteDemande(req.params.id);
+    return res.status(200).json(result);
+  } catch (err) {
+    const statusCode = err.status || 500;
+    const message = err.message || 'Erreur serveur';
+    return res.status(statusCode).json({ error: message });
+  }
+});
+
 module.exports = router;

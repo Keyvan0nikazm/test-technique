@@ -5,6 +5,7 @@ import { message, Layout, Typography } from 'antd';
 import DemandesTable from '../components/DemandeTable';
 import DemandeFormModal from '../components/DemandeFormModal';
 import axios from 'axios';
+import { Button, Row, Col, Space } from 'antd';
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -67,12 +68,20 @@ export default function HomePage() {
   return (
     <Layout style={{ padding: 15 }}>
       <Content>
-        <Title level={3}>Demandes de stage</Title>
+        <Row justify="space-between" align="middle" style={{ marginBottom: 12 }}>
+          <Col>
+            <Title level={3} style={{ margin: 0 }}>Demandes de stage</Title>
+          </Col>
+          <Col>
+            <Space>
+              <Button type="primary" onClick={() => setOpenCreate(true)}>Nouvelle demande</Button>
+            </Space>
+          </Col>
+        </Row>
         <DemandesTable
           data={demandes}
           onRefresh={load}
           onUpdateStatus={handleUpdateStatus}
-          onCreateClick={() => setOpenCreate(true)}
         />
         <DemandeFormModal open={openCreate} onCancel={() => setOpenCreate(false)} onCreate={handleCreate} />
       </Content>

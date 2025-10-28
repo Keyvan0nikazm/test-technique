@@ -3,7 +3,7 @@ import type { Demande } from '../types';
 
 const api = axios.create({
   baseURL: 'http://localhost:3000',
-  timeout: 15000,
+  timeout: 10000,
 });
 
 export async function fetchDemandes(): Promise<Demande[]> {
