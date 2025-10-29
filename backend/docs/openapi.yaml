@@ -1,20 +1,204 @@
 openapi: 3.0.3
 info:
-  title: API Test
+  title: API Test - Gestion des demandes
   version: 1.0.0
+  description: API pour gérer les demandes de stage (create / list / get / update status / delete)
 servers:
   - url: http://localhost:3000
+tags:
+  - name: Intership
+    description: Opérations sur les demandes de stage
+
 paths:
-  /api/status:
+  /api/intership:
     get:
-      summary: Statut
+      tags: [Intership]
+      summary: Lister toutes les demandes
       responses:
         '200':
-          description: OK
+          description: Liste des demandes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Demande'
+    post:
+      tags: [Intership]
+      summary: Créer une nouvelle demande
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DemandeCreate'
+            example:
+              nom: "Dupont"
+              prenom: "Jean"
+              email: "jean.dupont@example.com"
+              service: "Urgences"
+              dateDebut: "2025-11-01T00:00:00.000Z"
+              dateFin: "2025-11-30T00:00:00.000Z"
+              motivation: "Intéressé par la pratique clinique"
+      responses:
+        '201':
+          description: Demande créée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Demande'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+  /api/intership/{id}:
+    get:
+      tags: [Intership]
+      summary: Récupérer une demande par id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Demande trouvée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Demande'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    delete:
+      tags: [Intership]
+      summary: Supprimer une demande par id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Suppression réussie
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  status:
+                  message:
                     type: string
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/intership/{id}/status:
+    patch:
+      tags: [Intership]
+      summary: Mettre à jour le statut d'une demande
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [en_attente, acceptee, refusee, annulee]
+            example:
+              status: "acceptee"
+      responses:
+        '200':
+          description: Statut mis à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Demande'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  schemas:
+    Demande:
+      type: object
+      properties:
+        id:
+          type: integer
+        nom:
+          type: string
+        prenom:
+          type: string
+        email:
+          type: string
+          format: email
+        service:
+          type: string
+        dateDebut:
+          type: string
+          format: date-time
+        dateFin:
+          type: string
+          format: date-time
+        motivation:
+          type: string
+        status:
+          type: string
+          enum: [en_attente, acceptee, refusee, annulee]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, nom, prenom, email, service, dateDebut, dateFin, status, createdAt]
+
+    DemandeCreate:
+      type: object
+      properties:
+        nom:
+          type: string
+        prenom:
+          type: string
+        email:
+          type: string
+          format: email
+        service:
+          type: string
+        dateDebut:
+          type: string
+          format: date-time
+        dateFin:
+          type: string
+          format: date-time
+        motivation:
+          type: string
+      required: [nom, prenom, email, service, dateDebut, dateFin]
+
+  responses:
+    BadRequest:
+      description: Requête invalide
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+    NotFound:
+      description: Ressource non trouvée
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
